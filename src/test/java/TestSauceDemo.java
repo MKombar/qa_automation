@@ -1,13 +1,12 @@
+import io.github.bonigarcia.wdm.WebDriverManager;
 import lv.acodemy.page_object.InventoryPage;
 import lv.acodemy.page_object.LoginPage;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.List;
 
 import static lv.acodemy.constants.Generic.SAUCE_URL;
 
@@ -19,7 +18,12 @@ public class TestSauceDemo {
 
     @BeforeMethod
     public void initialize() {
-        driver = new ChromeDriver();
+        WebDriverManager.chromedriver().setup();
+        ChromeOptions options = new ChromeOptions();
+        // --headless parameter is needed to run it on Ubuntu (without GUI)
+        options.addArguments("--headless");
+
+        driver = new ChromeDriver(options);
         driver.get(SAUCE_URL);
         loginPage = new LoginPage(driver);
         inventoryPage = new InventoryPage(driver);
@@ -27,16 +31,10 @@ public class TestSauceDemo {
 
     @Test
     public void authorizeTest() {
-        driver.get(SAUCE_URL);
         loginPage.authorize("standard_user", "secret_sauce");
         Assert.assertEquals(inventoryPage.getTitleElement().getText(), "PRODUCTS");
     }
-    @Test
-    public void invalidCredentialTest(){
-        driver.get(SAUCE_URL);
-        loginPage.authorize("standard_user", "incorrect_pw");
-        Assert.assertEquals(loginPage.getErrorMessage(),"Epic sadface: Username and password do not match any user in this service");
-    }
+
     @Test
     public void openProductTest() {
         loginPage.authorize("standard_user", "secret_sauce");
