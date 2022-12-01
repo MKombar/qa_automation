@@ -10,7 +10,7 @@ public class LoginPage {
     private final By loginButton = By.xpath("//input[contains(@class,'submit-button')]");
     private final By errorMessage = By.xpath("//h3[@data-test='error']");
 
-    private WebDriver driver;
+    private final WebDriver driver;
 
     public LoginPage(WebDriver driver) {
         this.driver = driver;
